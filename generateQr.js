@@ -2,7 +2,7 @@ const QRCode = require("qrcode");
 const path = require("path");
 
 const menuUrl =
-  "https://restaurant-menu-production-9814.up.railway.app/";
+  "https://restaurant-menu-production-aa8b.up.railway.app/";
 
 const outputPath = path.join(
   __dirname,
