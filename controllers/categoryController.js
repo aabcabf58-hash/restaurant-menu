@@ -6,8 +6,8 @@ exports.addCategory = async (req, res) => {
     const {
       name_ar,
       name_en,
-      image_url = null,
-      sort_order = 0,
+      image_url ,
+      sort_order ,
     } = req.body;
 
     if (!name_ar || !name_en) {
