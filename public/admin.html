@@ -36,10 +36,12 @@ function categoryModal(id) {
 
   if (id != null) {
     const category = cats.find(item => String(item.id) === String(id));
-    if (!category) return note("القسم غير موجود");
+    if (!category) {
+      note("القسم غير موجود");
+      return;
+    }
 
     form.category_id.value = category.id;
-
     for (const field of ["name_ar", "name_en", "image_url", "sort_order"]) {
       form[field].value = category[field] ?? "";
     }
