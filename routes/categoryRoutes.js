@@ -19,6 +19,6 @@ router.put("/editcategory", superAdmin,  editCategory);
 router.put("/editActivecategory", superAdmin,  editCategoryActive);
 
 router.get("/getAllCatActive",getActiveCategories);
-
+router.delete("/deleteItem/:item_id", superAdmin, deleteItem);
 
 module.exports = router;

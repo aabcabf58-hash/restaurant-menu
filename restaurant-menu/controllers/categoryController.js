@@ -320,3 +320,58 @@ exports.getActiveCategories = async (req, res) => {
     });
   }
 };
+
+exports.deleteCategory = async (req, res) => {
+  const categoryId = Number(req.params.category_id);
+  if (!Number.isSafeInteger(categoryId) || categoryId <= 0) {
+    return res.status(400).json({ success: false, message: "رقم القسم غير صالح." });
+  }
+
+  let client;
+  try {
+    client = await pool.connect();
+    await client.query("BEGIN");
+
+    const category = await client.query(
+      "SELECT id FROM categories WHERE id = $1 FOR UPDATE",
+      [categoryId]
+    );
+
+    if (category.rows.length === 0) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({ success: false, message: "القسم غير موجود." });
+    }
+
+    const deleted = await client.query(
+      `
+      DELETE FROM categories
+      WHERE id = $1
+        AND NOT EXISTS (SELECT 1 FROM items WHERE category_id = $1)
+      RETURNING id
+      `,
+      [categoryId]
+    );
+
+    await client.query("COMMIT");
+
+    if (deleted.rows.length === 0) {
+      return res.status(409).json({
+        success: false,
+        message: "القسم فيه منتجات. انقلها لقسم تاني أو احذفها أولاً.",
+      });
+    }
+
+    return res.status(200).json({ success: true, data: deleted.rows[0] });
+  } catch (error) {
+    if (client) await client.query("ROLLBACK").catch(() => {});
+
+    if (error.code === "23503") {
+      return res.status(409).json({ success: false, message: "القسم مرتبط ببيانات أخرى." });
+    }
+
+    console.error("deleteCategory error:", error.message);
+    return res.status(500).json({ success: false, message: "تعذّر حذف القسم." });
+  } finally {
+    client?.release();
+  }
+};

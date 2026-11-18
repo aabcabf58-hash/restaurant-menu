@@ -97,6 +97,12 @@ app.use((error, req, res, next) => {
 });
 
 // تشغيل السيرفر
-app.listen(PORT, "0.0.0.0", () => {
+app.listen(PORT, "0.0.0.0", (error) => {
+  if (error) {
+    console.error(`Could not start server on port ${PORT}: ${error.code ?? error.message}`);
+    process.exitCode = 1;
+    return;
+  }
+
   console.log(`Server is running on port ${PORT}`);
 });
