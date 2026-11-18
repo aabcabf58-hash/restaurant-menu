@@ -2,7 +2,7 @@ const express = require("express");
 
 const {
   addCategory,  getAllCategories,  editCategory,
-  editCategoryActive,getActiveCategories
+  editCategoryActive,getActiveCategories,deleteCategory
 } = require("../controllers/categoryController");
 
 const {
@@ -20,5 +20,7 @@ router.put("/editActivecategory", superAdmin,  editCategoryActive);
 
 router.get("/getAllCatActive",getActiveCategories);
 
+
+router.delete("/deleteCategory/:category_id", superAdmin, deleteCategory);
 
 module.exports = router;
