@@ -12,12 +12,12 @@
 <section id="app" class="hidden">
 <header class="top"><div><b>إدارة متجر فوبيجو راما</b><small id="userName"></small></div><nav class="nav"><button class="btn active" data-tab="categories">الأقسام</button><button class="btn" data-tab="items">المنتجات</button><button class="btn" data-tab="users">المستخدمون</button><button class="btn" id="logout">خروج</button></nav></header>
 <main class="main">
-<section id="categories" class="panel"><div class="head"><h2>الأقسام</h2><button class="btn primary" onclick="categoryModal()">+ قسم</button></div><div id="categoryGrid" class="grid"></div></section>
-<section id="items" class="panel hidden"><div class="head"><h2>المنتجات</h2><button class="btn primary" onclick="itemModal()">+ منتج</button></div><div id="itemGrid" class="grid"></div></section>
+<section id="categories" class="panel"><div class="head"><h2>الأقسام</h2><button class="btn primary" onclick="categoryModal('create')">+ قسم</button></div><div id="categoryGrid" class="grid"></div></section>
+<section id="items" class="panel hidden"><div class="head"><h2>المنتجات</h2><button class="btn primary" onclick="itemModal('create')">+ منتج</button></div><div id="itemGrid" class="grid"></div></section>
 <section id="users" class="panel hidden"><h2>إضافة مستخدم</h2><form id="userForm" class="formgrid"><div class="field"><label>الاسم</label><input name="full_name" required></div><div class="field"><label>رقم الهاتف</label><input name="numberphone" required></div><div class="field"><label>كلمة السر</label><input name="password" type="password" minlength="6" required></div><div class="field"><label>Role</label><select name="role"><option>client</option><option>admin</option><option>super_admin</option></select></div><button class="btn primary full">حفظ المستخدم</button></form></section>
 </main></section>
-<div id="catModal" class="modal hidden"><form id="catForm" class="box"><button type="button" class="btn close" onclick="closeM('catModal')">×</button><h2>حفظ قسم</h2><input name="category_id" type="hidden"><div class="formgrid"><div class="field"><label>الاسم بالعربي</label><input name="name_ar" required></div><div class="field"><label>English name</label><input name="name_en" required></div><div class="field full"><label>رابط الصورة</label><input name="image_url"></div><div class="field"><label>الترتيب</label><input name="sort_order" type="number" min="0" value="0"></div></div><button class="btn primary wide">حفظ</button></form></div>
-<div id="itmModal" class="modal hidden"><form id="itmForm" class="box"><button type="button" class="btn close" onclick="closeM('itmModal')">×</button><h2>حفظ منتج</h2><input name="item_id" type="hidden"><div class="formgrid"><div class="field full"><label>القسم</label><select name="category_id"></select></div><div class="field"><label>الاسم بالعربي</label><input name="name_ar" required></div><div class="field"><label>English name</label><input name="name_en" required></div><div class="field"><label>الوصف بالعربي</label><textarea name="description_ar"></textarea></div><div class="field"><label>English description</label><textarea name="description_en"></textarea></div><div class="field"><label>السعر</label><input name="price" type="number" min="0" step=".01" required></div><div class="field"><label>العملة</label><select name="currency"><option>USD</option><option>LBP</option></select></div><div class="field full"><label>رابط الصورة</label><input name="image_url"></div><div class="field"><label>الترتيب</label><input name="sort_order" type="number" min="0" value="0"></div><div class="field"><label>التوفر</label><select name="is_available"><option value="true">متوفر</option><option value="false">غير متوفر</option></select></div></div><button class="btn primary wide">حفظ</button></form></div>
+<div id="catModal" class="modal hidden"><form id="catForm" class="box"><button type="button" class="btn close" onclick="closeM('catModal')">×</button><h2>حفظ قسم</h2><div class="formgrid"><div class="field"><label>الاسم بالعربي</label><input name="name_ar" required></div><div class="field"><label>English name</label><input name="name_en" required></div><div class="field full"><label>رابط الصورة</label><input name="image_url"></div><div class="field"><label>الترتيب</label><input name="sort_order" type="number" min="0" value="0"></div></div><button class="btn primary wide">حفظ</button></form></div>
+<div id="itmModal" class="modal hidden"><form id="itmForm" class="box"><button type="button" class="btn close" onclick="closeM('itmModal')">×</button><h2>حفظ منتج</h2><div class="formgrid"><div class="field full"><label>القسم</label><select name="category_id"></select></div><div class="field"><label>الاسم بالعربي</label><input name="name_ar" required></div><div class="field"><label>English name</label><input name="name_en" required></div><div class="field"><label>الوصف بالعربي</label><textarea name="description_ar"></textarea></div><div class="field"><label>English description</label><textarea name="description_en"></textarea></div><div class="field"><label>السعر</label><input name="price" type="number" min="0" step=".01" required></div><div class="field"><label>العملة</label><select name="currency"><option>USD</option><option>LBP</option></select></div><div class="field full"><label>رابط الصورة</label><input name="image_url"></div><div class="field"><label>الترتيب</label><input name="sort_order" type="number" min="0" value="0"></div><div class="field"><label>التوفر</label><select name="is_available"><option value="true">متوفر</option><option value="false">غير متوفر</option></select></div></div><button class="btn primary wide">حفظ</button></form></div>
 <div id="toast" class="toast hidden"></div>
 <script>
 const API="",q=s=>document.querySelector(s),esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));let token=localStorage.getItem("menu_token")||"",cats=[],items=[];
@@ -27,29 +27,65 @@ function note(t){q("#toast").textContent=t;q("#toast").classList.remove("hidden"
 q("#loginForm").onsubmit=async e=>{e.preventDefault();try{const f=e.currentTarget,d=await call("/api/admin/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({numberphone:f.numberphone.value.trim(),password:f.password.value})});token=d.token;localStorage.setItem("menu_token",token);start(d.user)}catch(x){q("#loginError").textContent=x.message}};
 function start(u){q("#login").classList.add("hidden");q("#app").classList.remove("hidden");q("#userName").textContent=u?.full_name?` — ${u.full_name}`:"";loadCats()}q("#logout").onclick=logout;
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.remove("active"));b.classList.add("active");["categories","items","users"].forEach(x=>q("#"+x).classList.toggle("hidden",x!==b.dataset.tab));if(b.dataset.tab==="items")loadItems()});
-async function loadCats(){try{cats=(await call("/api/categories/getAllCategories",{headers:headers()})).data||[];q("#categoryGrid").innerHTML=cats.map(c=>`<article class="card"><div class="photo" style="background-image:url('${esc(c.image_url||"")}')"></div><div class="body"><h3>${esc(c.name_ar)}</h3><div class="en">${esc(c.name_en)}</div><div class="row"><span>ترتيب ${c.sort_order}</span><span class="badge ${c.is_active?"":"off"}">${c.is_active?"ظاهر":"مخفي"}</span></div><div class="actions"><button class="btn muted" onclick="categoryModal(${c.id})">تعديل</button><button class="btn ${c.is_active?"danger":"muted"}" onclick="toggleCat(${c.id},${!c.is_active})">${c.is_active?"إخفاء":"إظهار"}</button><button class="btn danger" onclick="deleteCategory(${c.id})">حذف</button></div></div></article>`).join("");q("#itmForm").category_id.innerHTML=cats.map(c=>`<option value="${c.id}">${esc(c.name_ar)}</option>`).join("")}catch(x){note(x.message)}}
-function categoryModal(id) {
+async function loadCats(){try{cats=(await call("/api/categories/getAllCategories",{headers:headers()})).data||[];q("#categoryGrid").innerHTML=cats.map(c=>`<article class="card"><div class="photo" style="background-image:url('${esc(c.image_url||"")}')"></div><div class="body"><h3>${esc(c.name_ar)}</h3><div class="en">${esc(c.name_en)}</div><div class="row"><span>ترتيب ${c.sort_order}</span><span class="badge ${c.is_active?"":"off"}">${c.is_active?"ظاهر":"مخفي"}</span></div><div class="actions"><button class="btn muted" onclick="categoryModal('edit', ${c.id})">تعديل</button><button class="btn ${c.is_active?"danger":"muted"}" onclick="toggleCat(${c.id},${!c.is_active})">${c.is_active?"إخفاء":"إظهار"}</button><button class="btn danger" onclick="deleteCategory(${c.id})">حذف</button></div></div></article>`).join("");q("#itmForm").category_id.innerHTML=cats.map(c=>`<option value="${c.id}">${esc(c.name_ar)}</option>`).join("")}catch(x){note(x.message)}}
+let categorySubmission;
+
+function categoryModal(mode, id) {
+  categorySubmission = undefined;
   const form = q("#catForm");
   form.reset();
-  form.category_id.value = "";
   form.sort_order.value = 0;
 
-  if (id != null) {
+  if (mode === "edit") {
     const category = cats.find(item => String(item.id) === String(id));
-    if (!category) {
+    const categoryId = Number(category?.id);
+    if (!Number.isSafeInteger(categoryId) || categoryId <= 0) {
       note("القسم غير موجود");
       return;
     }
 
-    form.category_id.value = category.id;
     for (const field of ["name_ar", "name_en", "image_url", "sort_order"]) {
-      form[field].value = category[field] ?? "";
+      form.elements.namedItem(field).value = category[field] ?? "";
     }
+    categorySubmission = {
+      url: "/api/categories/editcategory",
+      method: "PUT",
+      categoryId,
+    };
+  } else if (mode === "create") {
+    categorySubmission = { url: "/api/categories/createCategory", method: "POST" };
+  } else {
+    return;
   }
 
+  q("#catForm h2").textContent = mode === "edit" ? "تعديل القسم" : "إضافة قسم";
   q("#catModal").classList.remove("hidden");
 }
-q("#catForm").onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,b={name_ar:f.name_ar.value.trim(),name_en:f.name_en.value.trim(),image_url:f.image_url.value.trim()||null,sort_order:+f.sort_order.value||0};if(f.category_id.value)b.category_id=+f.category_id.value;try{await call(f.category_id.value?"/api/categories/editcategory":"/api/categories/createCategory",{method:f.category_id.value?"PUT":"POST",headers:headers(),body:JSON.stringify(b)});closeM("catModal");note("تم الحفظ");loadCats()}catch(x){note(x.message)}};
+
+q("#catForm").onsubmit = async event => {
+  event.preventDefault();
+  if (!categorySubmission) return;
+
+  const { url, method, categoryId } = categorySubmission;
+  const values = new FormData(event.currentTarget);
+  const payload = {
+    name_ar: values.get("name_ar").trim(),
+    name_en: values.get("name_en").trim(),
+    image_url: values.get("image_url").trim() || null,
+    sort_order: Number(values.get("sort_order")) || 0,
+  };
+  if (method === "PUT") payload.category_id = categoryId;
+
+  try {
+    await call(url, { method, headers: headers(), body: JSON.stringify(payload) });
+    closeM("catModal");
+    note("تم الحفظ");
+    loadCats();
+  } catch (error) {
+    note(error.message);
+  }
+};
+
 async function toggleCat(category_id,is_active){try{await call("/api/categories/editActivecategory",{method:"PUT",headers:headers(),body:JSON.stringify({category_id,is_active})});loadCats()}catch(x){note(x.message)}}
 
 async function deleteCategory(id) {
@@ -66,9 +102,67 @@ async function deleteCategory(id) {
     note(error.message);
   }
 }
-async function loadItems(){try{items=(await call("/api/items/getAllItems",{headers:headers()})).data||[];q("#itemGrid").innerHTML=items.map(i=>`<article class="card"><div class="photo" style="background-image:url('${esc(i.image_url||"")}')"></div><div class="body"><h3>${esc(i.name_ar)}</h3><div class="en">${esc(i.name_en)}</div><div class="row"><b>${Number(i.price).toLocaleString()} ${i.currency}</b><span class="badge ${i.is_active&&i.is_available?"":"off"}">${!i.is_active?"مخفي":i.is_available?"متوفر":"غير متوفر"}</span></div><div class="actions"><button class="btn muted" onclick="itemModal(${i.id})">تعديل</button><button class="btn danger" onclick="toggleItem(${i.id},${!i.is_active})">${i.is_active?"إخفاء":"إظهار"}</button><button class="btn danger" onclick="delItem(${i.id})">حذف</button></div></div></article>`).join("")}catch(x){note(x.message)}}
-function itemModal(id){const f=q("#itmForm");f.reset();f.item_id.value="";if(id){const i=items.find(x=>x.id==id);["item_id","category_id","name_ar","name_en","description_ar","description_en","price","currency","image_url","sort_order"].forEach(k=>f[k].value=i[k]??"");f.is_available.value=String(i.is_available)}q("#itmModal").classList.remove("hidden")}
-q("#itmForm").onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,b={category_id:+f.category_id.value,name_ar:f.name_ar.value.trim(),name_en:f.name_en.value.trim(),description_ar:f.description_ar.value.trim()||null,description_en:f.description_en.value.trim()||null,price:+f.price.value,currency:f.currency.value,image_url:f.image_url.value.trim()||null,is_available:f.is_available.value==="true",sort_order:+f.sort_order.value||0};if(f.item_id.value)b.item_id=+f.item_id.value;try{await call(f.item_id.value?"/api/items/editItem":"/api/items/createItem",{method:f.item_id.value?"PUT":"POST",headers:headers(),body:JSON.stringify(b)});closeM("itmModal");note("تم الحفظ");loadItems()}catch(x){note(x.message)}};
+async function loadItems(){try{items=(await call("/api/items/getAllItems",{headers:headers()})).data||[];q("#itemGrid").innerHTML=items.map(i=>`<article class="card"><div class="photo" style="background-image:url('${esc(i.image_url||"")}')"></div><div class="body"><h3>${esc(i.name_ar)}</h3><div class="en">${esc(i.name_en)}</div><div class="row"><b>${Number(i.price).toLocaleString()} ${i.currency}</b><span class="badge ${i.is_active&&i.is_available?"":"off"}">${!i.is_active?"مخفي":i.is_available?"متوفر":"غير متوفر"}</span></div><div class="actions"><button class="btn muted" onclick="itemModal('edit', ${i.id})">تعديل</button><button class="btn danger" onclick="toggleItem(${i.id},${!i.is_active})">${i.is_active?"إخفاء":"إظهار"}</button><button class="btn danger" onclick="delItem(${i.id})">حذف</button></div></div></article>`).join("")}catch(x){note(x.message)}}
+let itemSubmission;
+
+function itemModal(mode, id) {
+  itemSubmission = undefined;
+  const form = q("#itmForm");
+  form.reset();
+
+  if (mode === "edit") {
+    const item = items.find(candidate => String(candidate.id) === String(id));
+    const itemId = Number(item?.id);
+    if (!Number.isSafeInteger(itemId) || itemId <= 0) {
+      note("المنتج غير موجود");
+      return;
+    }
+
+    for (const field of ["category_id", "name_ar", "name_en", "description_ar", "description_en", "price", "currency", "image_url", "sort_order"]) {
+      form.elements.namedItem(field).value = item[field] ?? "";
+    }
+    form.elements.namedItem("is_available").value = String(item.is_available);
+    itemSubmission = { url: "/api/items/editItem", method: "PUT", itemId };
+  } else if (mode === "create") {
+    itemSubmission = { url: "/api/items/createItem", method: "POST" };
+  } else {
+    return;
+  }
+
+  q("#itmForm h2").textContent = mode === "edit" ? "تعديل المنتج" : "إضافة منتج";
+  q("#itmModal").classList.remove("hidden");
+}
+
+q("#itmForm").onsubmit = async event => {
+  event.preventDefault();
+  if (!itemSubmission) return;
+
+  const { url, method, itemId } = itemSubmission;
+  const values = new FormData(event.currentTarget);
+  const payload = {
+    category_id: Number(values.get("category_id")),
+    name_ar: values.get("name_ar").trim(),
+    name_en: values.get("name_en").trim(),
+    description_ar: values.get("description_ar").trim() || null,
+    description_en: values.get("description_en").trim() || null,
+    price: Number(values.get("price")),
+    currency: values.get("currency"),
+    image_url: values.get("image_url").trim() || null,
+    is_available: values.get("is_available") === "true",
+    sort_order: Number(values.get("sort_order")) || 0,
+  };
+  if (method === "PUT") payload.item_id = itemId;
+
+  try {
+    await call(url, { method, headers: headers(), body: JSON.stringify(payload) });
+    closeM("itmModal");
+    note("تم الحفظ");
+    loadItems();
+  } catch (error) {
+    note(error.message);
+  }
+};
+
 async function toggleItem(item_id,is_active){try{await call("/api/items/editActiveItem",{method:"PUT",headers:headers(),body:JSON.stringify({item_id,is_active})});loadItems()}catch(x){note(x.message)}}async function delItem(id){if(confirm("حذف المنتج نهائياً؟"))try{await call(`/api/items/deleteItem/${id}`,{method:"DELETE",headers:headers()});loadItems()}catch(x){note(x.message)}}
 q("#userForm").onsubmit=async e=>{e.preventDefault();const f=e.currentTarget;try{await call("/api/admin/addUser",{method:"POST",headers:headers(),body:JSON.stringify({full_name:f.full_name.value.trim(),numberphone:f.numberphone.value.trim(),password:f.password.value,role:f.role.value})});f.reset();note("تم إنشاء المستخدم")}catch(x){note(x.message)}};if(token)start();
 </script></body></html>
