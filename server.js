@@ -23,14 +23,14 @@ app.use(express.urlencoded({ extended: true }));
 // تشغيل ملفات HTML وCSS وJavaScript
 app.use(express.static(path.join(__dirname, "public")));
 
-// إتاحة صور الأصناف
+// إتاحة صور المنتجات
 app.use(
   "/uploads",
   express.static(path.join(__dirname, "public", "uploads"))
 );
 
 // الصفحة الرئيسية للزبائن
-app.get("/", (req, res) => {
+app.get(["/", "/foubijouRama"], (req, res) => {
   res.sendFile(path.join(__dirname, "public", "menu.html"));
 });
 app.use("/api/admin", adminRoutes);
@@ -39,7 +39,7 @@ app.use("/api/items", itemRoutes);
 
 
 
-// صفحة إدارة المطعم
+// صفحة إدارة المتجر
 app.get("/admin", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "admin.html"));
 });
@@ -48,7 +48,7 @@ app.get("/admin", (req, res) => {
 app.get("/api/health", (req, res) => {
   return res.status(200).json({
     success: true,
-    message: "Restaurant menu server is running",
+    message: "Foubijou Rama shop server is running",
   });
 });
 

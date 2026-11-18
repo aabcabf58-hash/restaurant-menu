@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>فوبيجو راما | منتجات المكياج</title>
+<link rel="canonical" href="https://www.zouzouamhaz.com/foubijouRama">
+<style>
+:root{--berry:#8f1359;--fuchsia:#b91b75;--bg:#fff3f9;--ink:#35182c;--muted:#715869;--line:#efd0e4}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial}button,input{font:inherit}.hero{padding:22px 5% 72px;background:linear-gradient(130deg,#671240,#aa146a 68%,#be2482);color:#fff}.wrap{width:min(1080px,100%);margin:auto}.top{display:flex;justify-content:space-between;align-items:center}.brand small{color:#ffe4f3;letter-spacing:.16em}.brand h1{margin:3px 0}.lang{border:1px solid #ffffff55;background:#ffffff14;color:#fff;border-radius:99px;padding:9px 15px}.intro{margin-top:48px;max-width:620px}.intro h2{font-size:clamp(35px,7vw,60px);margin:8px 0}.intro p{color:#ffe4f3;line-height:1.8}.content{width:min(1080px,94%);margin:-35px auto 50px}.search{background:#fff;border-radius:16px;padding:8px 15px;box-shadow:0 15px 35px #8f135921}.search input{width:100%;border:0;outline:0;padding:11px;background:transparent}.search:focus-within{outline:2px solid var(--fuchsia);outline-offset:2px}.chips{display:flex;gap:8px;overflow:auto;padding:22px 0 14px;position:sticky;top:0;background:linear-gradient(var(--bg) 80%,transparent);z-index:2;scrollbar-width:none}.chip{white-space:nowrap;border:1px solid var(--line);background:#fff;padding:9px 16px;border-radius:99px}.chip.active{background:var(--berry);color:#fff}.section{margin-top:23px;scroll-margin-top:70px}.section-head{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:9px;margin-bottom:13px}.section-head h2{margin:0}.section-head span{color:var(--muted)}.items{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}.item{display:grid;grid-template-columns:145px 1fr;background:#fff;border:1px solid var(--line);border-radius:17px;overflow:hidden;min-height:145px}.photo{background:#f9e0ef center/cover}.info{padding:14px;display:flex;flex-direction:column}.info h3{margin:0}.alt{direction:ltr;text-align:left;color:var(--muted);font-size:12px;margin-top:4px}.desc{color:var(--muted);line-height:1.55;font-size:14px}.price{margin-top:auto;color:#99165f;font-weight:bold;font-size:18px}.empty{text-align:center;padding:70px 15px;color:var(--muted)}.loader{width:40px;height:40px;border:4px solid #ddd;border-top-color:var(--fuchsia);border-radius:50%;animation:s .8s linear infinite;margin:70px auto}@keyframes s{to{transform:rotate(360deg)}}.hidden{display:none}@media(max-width:720px){.items{grid-template-columns:1fr}.item{grid-template-columns:112px 1fr;min-height:135px}.desc{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}}
+
+.hero-feature{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,400px);gap:clamp(20px,4vw,52px);align-items:center;margin-top:24px}
+.hero-feature .intro{margin-top:0}
+.hero-portrait{display:block;width:100%;height:auto;border:1px solid #ffffff55;border-radius:24px;box-shadow:0 18px 42px #500a423d}
+@media(max-width:620px){
+  .hero-feature{grid-template-columns:1fr;gap:18px}
+  .hero-portrait{max-width:350px;justify-self:center;aspect-ratio:16/9;object-fit:cover;object-position:center 33%}
+}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap"><div class="top"><div class="brand"><small data-ar="منتجات المكياج" data-en="BEAUTY SHOP">منتجات المكياج</small><h1 id="brand" data-ar="فوبيجو راما" data-en="Foubijou Rama">فوبيجو راما</h1></div><button id="lang" class="lang">English</button></div><div class="hero-feature"><div class="intro"><h2 data-ar="مكياج لكل إطلالة" data-en="Makeup for every look">مكياج لكل إطلالة</h2><p data-ar="تصفّحي الأقسام واكتشفي منتجات المكياج المتوفّرة." data-en="Browse the categories to find your makeup essentials.">تصفّحي الأقسام واكتشفي منتجات المكياج المتوفّرة.</p></div><img class="hero-portrait" src="/images/barbie-hero.webp" alt="" width="960" height="640"></div></div></header>
+<main class="content"><div class="search"><input id="search" type="search" aria-label="ابحثي عن منتج" placeholder="ابحثي عن منتج..."></div><nav id="chips" class="chips"></nav><div id="loader" class="loader"></div><div id="sections"></div><div id="empty" class="empty hidden">ما في منتجات متوفّرة حالياً.</div></main>
+<script>
+const API="",q=s=>document.querySelector(s),esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));let lang=localStorage.getItem("menu_lang")||"ar",cats=[],items=[],selected="all",loading=true,loadFailed=false;const txt=(o,k)=>o[k+"_"+lang]||o[k+"_"+(lang==="ar"?"en":"ar")]||"";
+function language(){document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr";q("#lang").textContent=lang==="ar"?"English":"العربية";document.title=lang==="ar"?"فوبيجو راما | منتجات المكياج":"Foubijou Rama | Makeup";q("#search").placeholder=lang==="ar"?"ابحثي عن منتج...":"Search makeup products...";q("#search").setAttribute("aria-label",lang==="ar"?"ابحثي عن منتج":"Search products");document.querySelectorAll("[data-ar]").forEach(x=>x.textContent=x.dataset[lang]);render()}q("#lang").onclick=()=>{lang=lang==="ar"?"en":"ar";localStorage.setItem("menu_lang",lang);language()};q("#search").oninput=render;
+async function load() {
+  try {
+    const [categoriesResponse, itemsResponse] = await Promise.all([
+      fetch(API + "/api/categories/getAllCatActive"),
+      fetch(API + "/api/items/getAllActiveItems"),
+    ]);
+    const [categories, products] = await Promise.all([
+      categoriesResponse.json(),
+      itemsResponse.json(),
+    ]);
+    if (!categoriesResponse.ok || !itemsResponse.ok || categories.success === false || products.success === false) {
+      throw new Error("Could not load products");
+    }
+    cats = categories.data || [];
+    items = products.data || [];
+  } catch {
+    loadFailed = true;
+  } finally {
+    loading = false;
+    q("#loader").classList.add("hidden");
+    render();
+  }
+}
+
+function render(){
+  if (loading) return;
+  if (loadFailed || !cats.length || !items.length) {
+    const empty = q("#empty");
+    empty.classList.remove("hidden");
+    empty.textContent = loadFailed
+      ? (lang === "ar" ? "تعذّر تحميل المنتجات." : "Could not load the products.")
+      : (lang === "ar" ? "ما في منتجات متوفّرة حالياً." : "No products are available yet.");
+    return;
+  }
+  const query=q("#search").value.trim().toLowerCase();q("#chips").innerHTML=`<button class="chip ${selected==="all"?"active":""}" onclick="pick('all')">${lang==="ar"?"الكل":"All"}</button>`+cats.map(c=>`<button class="chip ${selected==c.id?"active":""}" onclick="pick('${c.id}')">${esc(txt(c,"name"))}</button>`).join("");let html="",count=0;cats.filter(c=>selected==="all"||selected==c.id).forEach(c=>{const list=items.filter(i=>i.category_id==c.id&&(!query||`${i.name_ar} ${i.name_en} ${i.description_ar||""} ${i.description_en||""}`.toLowerCase().includes(query)));if(!list.length)return;count+=list.length;html+=`<section id="cat-${c.id}" class="section"><div class="section-head"><h2>${esc(txt(c,"name"))}</h2><span>${list.length} ${lang==="ar"?"منتجات":"products"}</span></div><div class="items">${list.map(i=>`<article class="item"><div class="photo" style="background-image:url('${esc(i.image_url||"")}')"></div><div class="info"><h3>${esc(txt(i,"name"))}</h3><div class="alt">${esc(i["name_"+(lang==="ar"?"en":"ar")]||"")}</div><p class="desc">${esc(txt(i,"description"))}</p><div class="price">${Number(i.price).toLocaleString(lang==="ar"?"ar-LB":"en-US")} ${esc(i.currency)}</div></div></article>`).join("")}</div></section>`});q("#sections").innerHTML=html;q("#empty").classList.toggle("hidden",count>0);if(!count)q("#empty").textContent=lang==="ar"?"ما في منتجات مطابقة.":"No matching products."}
+function pick(id){selected=id;render();if(id!=="all")q(`#cat-${id}`)?.scrollIntoView()}window.pick=pick;language();load();
+</script></body></html>
