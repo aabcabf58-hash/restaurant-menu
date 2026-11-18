@@ -303,6 +303,97 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .top { padding-block: 12px; }
   .items, .category-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* The butterfly follows the pointer without receiving clicks or touches. */
+.butterfly-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 29px;
+  height: 25px;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(var(--butterfly-x, 0px), var(--butterfly-y, 0px), 0)
+    translate(-50%, -50%) rotate(-12deg);
+  filter: drop-shadow(0 2px 2px #69204447);
+}
+.butterfly-cursor.is-visible { visibility: visible; opacity: 1; }
+.butterfly-cursor.is-touch { width: 34px; height: 29px; }
+html.has-butterfly-mouse, html.has-butterfly-mouse * { cursor: none !important; }
+
+.butterfly-wing {
+  position: absolute;
+  top: 8%;
+  width: 48%;
+  height: 79%;
+}
+.butterfly-wing::before, .butterfly-wing::after {
+  content: "";
+  position: absolute;
+  border: 1px solid #ac2d6a;
+  background: radial-gradient(circle at 38% 24%, #fff0fa 0 8%, transparent 10%),
+    linear-gradient(135deg, #ffc9e8, #f87bb8 65%, #c83181);
+}
+.butterfly-wing::before {
+  top: 0;
+  width: 100%;
+  height: 69%;
+  border-radius: 28% 74% 28% 64%;
+}
+.butterfly-wing::after {
+  bottom: 0;
+  right: 0;
+  width: 74%;
+  height: 45%;
+  border-radius: 70% 40% 60% 42%;
+}
+.butterfly-wing--left {
+  left: 2%;
+  transform-origin: right 60%;
+}
+.butterfly-wing--right {
+  right: 2%;
+  transform-origin: left 60%;
+}
+.butterfly-wing--right::before,
+.butterfly-wing--right::after { transform: scaleX(-1); }
+.butterfly-wing--right::after { right: auto; left: 0; }
+.butterfly-cursor.is-visible .butterfly-wing--left { animation: butterfly-left .26s ease-in-out infinite alternate; }
+.butterfly-cursor.is-visible .butterfly-wing--right { animation: butterfly-right .26s ease-in-out infinite alternate; }
+.butterfly-body {
+  position: absolute;
+  left: 50%;
+  top: 27%;
+  width: 9%;
+  height: 54%;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: #802657;
+}
+.butterfly-body::before, .butterfly-body::after {
+  content: "";
+  position: absolute;
+  top: -34%;
+  left: 50%;
+  width: 1px;
+  height: 40%;
+  border-radius: 999px;
+  background: #802657;
+  transform-origin: bottom;
+}
+.butterfly-body::before { transform: rotate(-34deg); }
+.butterfly-body::after { transform: rotate(34deg); }
+@keyframes butterfly-left {
+  from { transform: perspective(30px) rotateY(8deg); }
+  to { transform: perspective(30px) rotateY(64deg); }
+}
+@keyframes butterfly-right {
+  from { transform: perspective(30px) rotateY(-8deg); }
+  to { transform: perspective(30px) rotateY(-64deg); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation: none !important;
@@ -512,4 +603,53 @@ window.addEventListener("hashchange", () => {
 });
 updateLanguage();
 loadCategories();
-</script></body></html>
+</script>
+<div id="butterfly-cursor" class="butterfly-cursor" aria-hidden="true">
+  <span class="butterfly-wing butterfly-wing--left"></span>
+  <span class="butterfly-wing butterfly-wing--right"></span>
+  <span class="butterfly-body"></span>
+</div>
+<script>
+(() => {
+  const butterfly = document.querySelector("#butterfly-cursor");
+  const page = document.documentElement;
+
+  function showButterfly(x, y, isTouch) {
+    const touchY = y < 42 ? y + 27 : y - 27;
+    butterfly.style.setProperty("--butterfly-x", `${x}px`);
+    butterfly.style.setProperty("--butterfly-y", `${isTouch ? touchY : y}px`);
+    butterfly.classList.toggle("is-touch", isTouch);
+    butterfly.classList.add("is-visible");
+    page.classList.toggle("has-butterfly-mouse", !isTouch);
+  }
+
+  function hideButterfly() {
+    butterfly.classList.remove("is-visible");
+    page.classList.remove("has-butterfly-mouse");
+  }
+
+  function followTouch(event) {
+    const finger = event.touches[0];
+    if (finger) showButterfly(finger.clientX, finger.clientY, true);
+    else hideButterfly();
+  }
+
+  document.addEventListener("pointermove", event => {
+    if (event.pointerType === "mouse") showButterfly(event.clientX, event.clientY, false);
+  }, { passive: true });
+
+  document.addEventListener("pointerout", event => {
+    if (event.pointerType === "mouse" && !event.relatedTarget) hideButterfly();
+  }, { passive: true });
+
+  for (const type of ["touchstart", "touchmove", "touchend", "touchcancel"]) {
+    document.addEventListener(type, followTouch, { passive: true });
+  }
+
+  window.addEventListener("blur", hideButterfly);
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) hideButterfly();
+  });
+})();
+</script>
+</body></html>
