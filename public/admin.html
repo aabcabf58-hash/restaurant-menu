@@ -5,6 +5,12 @@
 <title>فوبيجو راما | إدارة المتجر</title>
 <style>
 :root{--berry:#843957;--fuchsia:#a63e68;--bg:#fff6fa;--line:#efcddd;--red:#a72247}*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial;background:var(--bg);color:#35182c}button,input,select,textarea{font:inherit}.hidden{display:none!important}.login{min-height:100vh;display:grid;place-items:center;background:linear-gradient(145deg,#fff0f7,#f6c7dd);padding:20px}.box,.panel{background:#fff;border-radius:20px;padding:24px}.box{width:min(420px,100%)}h1,h2{margin-top:0}.field{display:grid;gap:6px;margin:13px 0}.field input,.field select,.field textarea{padding:11px;border:1px solid var(--line);border-radius:10px}.field textarea{min-height:80px}.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:bold;cursor:pointer}.primary{background:var(--fuchsia);color:#fff}.muted{background:#f8e7f1}.danger{background:#fce5ee;color:var(--red)}.wide{width:100%}.login small{color:var(--fuchsia);font-weight:bold}.error{color:var(--red);margin-top:10px}.top{background:#f9d9e9;color:#412433;border-bottom:1px solid var(--line);padding:18px 5%;display:flex;justify-content:space-between;align-items:center}.nav{display:flex;gap:8px;overflow:auto}.nav button{background:#fff3f9;color:var(--berry)}.nav button.active{background:var(--fuchsia);color:#fff}.main{width:min(1150px,94%);margin:25px auto}.head{display:flex;justify-content:space-between;align-items:center}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}.card{border:1px solid var(--line);border-radius:15px;overflow:hidden}.photo{height:135px;background:#f9e0ef center/cover}.body{padding:14px}.body h3{margin:0}.en{direction:ltr;text-align:left;color:#715869;font-size:13px}.row{display:flex;justify-content:space-between;align-items:center;margin:12px 0}.actions{display:flex;gap:7px}.badge{font-size:12px;padding:4px 8px;border-radius:99px;background:#e0f1e7;color:#287750}.badge.off{background:#f5e2e0;color:var(--red)}.modal{position:fixed;inset:0;background:#391029bb;display:grid;place-items:center;padding:15px;z-index:10}.modal .box{width:min(650px,100%);max-height:94vh;overflow:auto}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}.full{grid-column:1/-1}.close{float:left}.toast{position:fixed;left:20px;bottom:20px;background:var(--berry);color:#fff;padding:12px 17px;border-radius:10px;z-index:20}@media(max-width:650px){.top{display:block}.nav{margin-top:12px}.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.grid{grid-template-columns:1fr}}
+
+.image-upload [data-image-status]:empty { display: none; }
+.image-upload [data-image-status] { color: var(--berry); }
+.image-preview { display: block; width: min(100%, 220px); max-height: 150px; object-fit: contain; border: 1px solid var(--line); border-radius: 12px; }
+.image-preview[hidden] { display: none; }
+.btn:disabled { opacity: .55; cursor: wait; }
 </style>
 </head>
 <body>
@@ -16,14 +22,32 @@
 <section id="items" class="panel hidden"><div class="head"><h2>المنتجات</h2><button class="btn primary" onclick="itemModal('create')">+ منتج</button></div><div id="itemGrid" class="grid"></div></section>
 <section id="users" class="panel hidden"><h2>إضافة مستخدم</h2><form id="userForm" class="formgrid"><div class="field"><label>الاسم</label><input name="full_name" required></div><div class="field"><label>رقم الهاتف</label><input name="numberphone" required></div><div class="field"><label>كلمة السر</label><input name="password" type="password" minlength="6" required></div><div class="field"><label>Role</label><select name="role"><option>client</option><option>admin</option><option>super_admin</option></select></div><button class="btn primary full">حفظ المستخدم</button></form></section>
 </main></section>
-<div id="catModal" class="modal hidden"><form id="catForm" class="box"><button type="button" class="btn close" onclick="closeM('catModal')">×</button><h2>حفظ قسم</h2><div class="formgrid"><div class="field"><label>الاسم بالعربي</label><input name="name_ar" required></div><div class="field"><label>English name</label><input name="name_en" required></div><div class="field full"><label>رابط الصورة</label><input name="image_url"></div><div class="field"><label>الترتيب</label><input name="sort_order" type="number" min="0" value="0"></div></div><button class="btn primary wide">حفظ</button></form></div>
-<div id="itmModal" class="modal hidden"><form id="itmForm" class="box"><button type="button" class="btn close" onclick="closeM('itmModal')">×</button><h2>حفظ منتج</h2><div class="formgrid"><div class="field full"><label>القسم</label><select name="category_id"></select></div><div class="field"><label>الاسم بالعربي</label><input name="name_ar" required></div><div class="field"><label>English name</label><input name="name_en" required></div><div class="field"><label>الوصف بالعربي</label><textarea name="description_ar"></textarea></div><div class="field"><label>English description</label><textarea name="description_en"></textarea></div><div class="field"><label>السعر</label><input name="price" type="number" min="0" step=".01" required></div><div class="field"><label>العملة</label><select name="currency"><option>USD</option><option>LBP</option></select></div><div class="field full"><label>رابط الصورة</label><input name="image_url"></div><div class="field"><label>الترتيب</label><input name="sort_order" type="number" min="0" value="0"></div><div class="field"><label>التوفر</label><select name="is_available"><option value="true">متوفر</option><option value="false">غير متوفر</option></select></div></div><button class="btn primary wide">حفظ</button></form></div>
+<div id="catModal" class="modal hidden"><form id="catForm" class="box"><button type="button" class="btn close" onclick="closeM('catModal')">×</button><h2>حفظ قسم</h2><div class="formgrid"><div class="field"><label>الاسم بالعربي</label><input name="name_ar" required></div><div class="field"><label>English name</label><input name="name_en" required></div><div class="field full image-upload">
+  <label for="category-image-file">اختيار صورة</label>
+  <input id="category-image-file" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" data-image-file>
+  <small data-image-status role="status"></small>
+  <img class="image-preview" data-image-preview alt="معاينة الصورة" hidden>
+  <label for="category-image-url">رابط الصورة</label>
+  <input id="category-image-url" name="image_url">
+</div><div class="field"><label>الترتيب</label><input name="sort_order" type="number" min="0" value="0"></div></div><button type="submit" class="btn primary wide">حفظ</button></form></div>
+<div id="itmModal" class="modal hidden"><form id="itmForm" class="box"><button type="button" class="btn close" onclick="closeM('itmModal')">×</button><h2>حفظ منتج</h2><div class="formgrid"><div class="field full"><label>القسم</label><select name="category_id"></select></div><div class="field"><label>الاسم بالعربي</label><input name="name_ar" required></div><div class="field"><label>English name</label><input name="name_en" required></div><div class="field"><label>الوصف بالعربي</label><textarea name="description_ar"></textarea></div><div class="field"><label>English description</label><textarea name="description_en"></textarea></div><div class="field"><label>السعر</label><input name="price" type="number" min="0" step=".01" required></div><div class="field"><label>العملة</label><select name="currency"><option>USD</option><option>LBP</option></select></div><div class="field full image-upload">
+  <label for="item-image-file">اختيار صورة</label>
+  <input id="item-image-file" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" data-image-file>
+  <small data-image-status role="status"></small>
+  <img class="image-preview" data-image-preview alt="معاينة الصورة" hidden>
+  <label for="item-image-url">رابط الصورة</label>
+  <input id="item-image-url" name="image_url">
+</div><div class="field"><label>الترتيب</label><input name="sort_order" type="number" min="0" value="0"></div><div class="field"><label>التوفر</label><select name="is_available"><option value="true">متوفر</option><option value="false">غير متوفر</option></select></div></div><button type="submit" class="btn primary wide">حفظ</button></form></div>
 <div id="toast" class="toast hidden"></div>
 <script>
 const API="",q=s=>document.querySelector(s),esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));let token=localStorage.getItem("menu_token")||"",cats=[],items=[];
 const headers=()=>({"Content-Type":"application/json",Authorization:`Bearer ${token}`});
 async function call(url,opt={}){const r=await fetch(API+url,opt),d=await r.json().catch(()=>({}));if(r.status===401){logout();throw Error(d.message||"انتهت الجلسة")}if(!r.ok||d.success===false)throw Error(d.message||"حدث خطأ");return d}
-function note(t){q("#toast").textContent=t;q("#toast").classList.remove("hidden");setTimeout(()=>q("#toast").classList.add("hidden"),2300)}function closeM(id){q("#"+id).classList.add("hidden")}function logout(){token="";localStorage.removeItem("menu_token");q("#app").classList.add("hidden");q("#login").classList.remove("hidden")}
+function note(t){q("#toast").textContent=t;q("#toast").classList.remove("hidden");setTimeout(()=>q("#toast").classList.add("hidden"),2300)}function closeM(id){
+  const modal=q("#"+id);
+  modal.querySelector("form")?.dispatchEvent(new Event("image-upload-close"));
+  modal.classList.add("hidden");
+}function logout(){token="";localStorage.removeItem("menu_token");q("#app").classList.add("hidden");q("#login").classList.remove("hidden")}
 q("#loginForm").onsubmit=async e=>{e.preventDefault();try{const f=e.currentTarget,d=await call("/api/admin/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({numberphone:f.numberphone.value.trim(),password:f.password.value})});token=d.token;localStorage.setItem("menu_token",token);start(d.user)}catch(x){q("#loginError").textContent=x.message}};
 function start(u){q("#login").classList.add("hidden");q("#app").classList.remove("hidden");q("#userName").textContent=u?.full_name?` — ${u.full_name}`:"";loadCats()}q("#logout").onclick=logout;
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.remove("active"));b.classList.add("active");["categories","items","users"].forEach(x=>q("#"+x).classList.toggle("hidden",x!==b.dataset.tab));if(b.dataset.tab==="items")loadItems()});
@@ -165,4 +189,94 @@ q("#itmForm").onsubmit = async event => {
 
 async function toggleItem(item_id,is_active){try{await call("/api/items/editActiveItem",{method:"PUT",headers:headers(),body:JSON.stringify({item_id,is_active})});loadItems()}catch(x){note(x.message)}}async function delItem(id){if(confirm("حذف المنتج نهائياً؟"))try{await call(`/api/items/deleteItem/${id}`,{method:"DELETE",headers:headers()});loadItems()}catch(x){note(x.message)}}
 q("#userForm").onsubmit=async e=>{e.preventDefault();const f=e.currentTarget;try{await call("/api/admin/addUser",{method:"POST",headers:headers(),body:JSON.stringify({full_name:f.full_name.value.trim(),numberphone:f.numberphone.value.trim(),password:f.password.value,role:f.role.value})});f.reset();note("تم إنشاء المستخدم")}catch(x){note(x.message)}};if(token)start();
+
+function bindImageUpload(form) {
+  const picker = form.querySelector('[data-image-file]');
+  const imageUrl = form.querySelector('[name="image_url"]');
+  const preview = form.querySelector('[data-image-preview]');
+  const status = form.querySelector('[data-image-status]');
+  const save = form.querySelector('[type="submit"]');
+  let activeUpload;
+
+  function updatePreview() {
+    preview.hidden = true;
+    preview.removeAttribute('src');
+    const value = imageUrl.value.trim();
+    if (!value) return;
+    try {
+      const url = new URL(value, location.href);
+      if (!['https:', 'http:'].includes(url.protocol)) return;
+      preview.src = url.href;
+      preview.hidden = false;
+    } catch {
+      // Leave the preview hidden until the URL is valid.
+    }
+  }
+
+  function setUploading(uploading) {
+    save.disabled = uploading;
+    imageUrl.readOnly = uploading;
+  }
+
+  function cancelUpload() {
+    activeUpload?.abort();
+    activeUpload = undefined;
+    setUploading(false);
+    picker.value = '';
+    status.textContent = '';
+  }
+
+  form.addEventListener('reset', () => {
+    cancelUpload();
+    queueMicrotask(updatePreview);
+  });
+  form.addEventListener('image-upload-close', cancelUpload);
+  form.addEventListener('submit', event => {
+    if (activeUpload) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  }, true);
+  imageUrl.addEventListener('input', updatePreview);
+  preview.addEventListener('error', () => { preview.hidden = true; });
+
+  picker.addEventListener('change', async () => {
+    const file = picker.files[0];
+    if (!file) return;
+    cancelUpload();
+    if (!file.size || file.size > 8 * 1024 * 1024) {
+      status.textContent = 'اختار صورة حجمها 8 MB أو أقل.';
+      return;
+    }
+
+    const upload = new AbortController();
+    activeUpload = upload;
+    setUploading(true);
+    status.textContent = 'عم نرفع الصورة…';
+
+    try {
+      const result = await call('/api/admin/upload-image', {
+        method: 'POST',
+        headers: { ...headers(), 'Content-Type': 'application/octet-stream' },
+        body: file,
+        signal: upload.signal,
+      });
+      if (activeUpload !== upload) return;
+
+      imageUrl.value = result.image_url;
+      updatePreview();
+      status.textContent = 'الصورة جاهزة. كبّس حفظ لتثبيتها.';
+    } catch (error) {
+      if (activeUpload === upload) status.textContent = error.message;
+    } finally {
+      if (activeUpload === upload) {
+        activeUpload = undefined;
+        setUploading(false);
+      }
+    }
+  });
+}
+
+bindImageUpload(q('#catForm'));
+bindImageUpload(q('#itmForm'));
 </script></body></html>
